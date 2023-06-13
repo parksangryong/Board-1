@@ -1,0 +1,69 @@
+#post{
+    width: 90%;
+    height: 50px;
+    background-color: azure;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+#post>span{
+    float: left;
+    text-align: center;
+    line-height: 50px;
+}
+
+#post:hover{
+    /* transform: scale(1.1); */
+    font-weight: bold;
+}
+
+#post>span:first-child{
+    width: 5%;
+    height: 100%;
+    background-color: yellowgreen;
+}
+#post>span:nth-child(2){
+    width: 20%;
+    height: 100%;
+    background-color: olivedrab;
+}
+#post>span:nth-child(3){
+    width: 30%;
+    height: 100%;
+    background-color: rgb(222, 235, 197);
+}
+#post>span:nth-child(4){
+    width: 15%;
+    height: 100%;
+    background-color: rgb(135, 197, 12);
+}
+#post>span:nth-child(5){
+    width: 20%;
+    height: 100%;
+    background-color: yellow;
+}
+#post>span:last-child{
+    width: 10%;
+    height: 100%;
+    background-color: oldlace;
+}
+
+#post button{
+    width: 35px;
+    height: 35px;
+}
+
+.btn1{
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.btn2{
+    margin-left: 5px;
+}
+
+#post button:hover{
+    background-color: blueviolet;
+    color: white;
+}

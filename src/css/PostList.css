@@ -1,0 +1,9 @@
+#PostList{
+    width: 90%;
+    height: 180px;
+    background-color: rgb(48, 198, 48);
+    margin: 0 auto;
+    padding-top: 20px;
+    border: 10px solid brown;
+    border-bottom: none;
+}
