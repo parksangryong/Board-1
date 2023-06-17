@@ -4,27 +4,63 @@ import PostList from './components/PostList';
 import Pagination from './components/Pagination';
 import Header from './components/Header';
 import InputComp from './components/InputComp';
+import axios from 'axios';
+import dayjs from 'dayjs';
 
 class App extends Component{
   constructor(props){
     super(props);
     this.state = {
       postlist: [
-        {no: 10, title: 'title-10', writer: '글쓴이10', postdate : '2023-06-10', detail: '내용10'},
-        {no: 9, title: 'title-9', writer: '글쓴이9', postdate : '2023-06-10', detail: '내용9'},
-        {no: 8, title: 'title-8', writer: '글쓴이8', postdate : '2023-06-10', detail: '내용8'},
-        {no: 7, title: 'title-7', writer: '글쓴이7', postdate : '2023-06-10', detail: '내용7'},
-        {no: 6, title: 'title-6', writer: '글쓴이6', postdate : '2023-06-10', detail: '내용6'},
-        {no: 5, title: 'title-5', writer: '글쓴이5', postdate : '2023-06-10', detail: '내용5'},
-        {no: 4, title: 'title-4', writer: '글쓴이4', postdate : '2023-06-10', detail: '내용4'},
-        {no: 3, title: 'title-3', writer: '글쓴이3', postdate : '2023-06-10', detail: '내용3'},
-        {no: 2, title: 'title-2', writer: '글쓴이2', postdate : '2023-06-10', detail: '내용2'},
-        {no: 1, title: 'title-1', writer: '글쓴이1', postdate : '2023-06-10', detail: '내용1'},
-      ],
-      postPerPage : 3,
+      //   {no: 10, title: 'title-10', writer: '글쓴이10', postdate : '2023-06-10', detail: '내용10'},
+      //   {no: 9, title: 'title-9', writer: '글쓴이9', postdate : '2023-06-10', detail: '내용9'},
+      //   {no: 8, title: 'title-8', writer: '글쓴이8', postdate : '2023-06-10', detail: '내용8'},
+      //   {no: 7, title: 'title-7', writer: '글쓴이7', postdate : '2023-06-10', detail: '내용7'},
+      //   {no: 6, title: 'title-6', writer: '글쓴이6', postdate : '2023-06-10', detail: '내용6'},
+      //   {no: 5, title: 'title-5', writer: '글쓴이5', postdate : '2023-06-10', detail: '내용5'},
+      //   {no: 4, title: 'title-4', writer: '글쓴이4', postdate : '2023-06-10', detail: '내용4'},
+      //   {no: 3, title: 'title-3', writer: '글쓴이3', postdate : '2023-06-10', detail: '내용3'},
+      //   {no: 2, title: 'title-2', writer: '글쓴이2', postdate : '2023-06-10', detail: '내용2'},
+      //   {no: 1, title: 'title-1', writer: '글쓴이1', postdate : '2023-06-10', detail: '내용1'},
+      // 
+    ],
+      postPerPage : 3, 
       currentPage : 1
     }
   }
+
+  componentDidMount = async() => {
+      const result = await axios.get('/postlist');
+
+      let postObj = [];
+
+        for(var i=0; i<result.data.length; i++){
+          postObj.push({no : result.data[i].no, title : result.data[i].title, writer : result.data[i].writer, detail : result.data[i].detail,
+          postdate : dayjs(result.data[i].postdate).format('YYYY-MM-DD')})
+        }
+
+        console.log(postObj)
+
+      this.setState({
+        postlist : postObj
+      })
+  }
+  componentDidUpdate = async() => {
+    const result = await axios.get('/postlist');
+
+    let postObj = [];
+
+      for(var i=0; i<result.data.length; i++){
+        postObj.push({no : result.data[i].no, title : result.data[i].title, writer : result.data[i].writer, detail : result.data[i].detail,
+        postdate : dayjs(result.data[i].postdate).format('YYYY-MM-DD')})
+      }
+
+      console.log(postObj)
+
+    this.setState({
+      postlist : postObj
+    })
+}
 
   setCurrentPage = (page) => {
     //console.log('넘어온 페이지: ' + page);  //1, 2, 3, 4
@@ -101,16 +137,46 @@ class App extends Component{
   //   })
   // }
 
-  addPost = (title, detail, writer, nowdate) => {
+  addPost = async(title, detail, writer, nowdate) => {
 
     const no = this.state.postlist.length + 1
 
-    const postObj = [{no: no, title : title, detail : detail, writer: writer, postdate: nowdate}]
+    const postObj = {no: no, title : title, detail : detail, writer: writer, postdate: nowdate}
 
-    const concatList = postObj.concat(this.state.postlist);
+    //const concatList = postObj.concat(this.state.postlist);
+
+    // this.setState({
+    //   postlist : concatList
+    // })
+    console.log(postObj);
+    const result = await axios.post('/postlist', postObj);
+    console.log(result);
+
+    window.location.replace('/main');
+  }
+
+  setUpdate = (no, title, detail, writer, postdate) => {
+    console.log("App update")
+
+    const postObj = {no: no, title: title, detail: detail, writer: writer, postdate: postdate}
+    const updateList = this.state.postlist.map(
+      (data) => (data.no === postObj.no ? {...data, ...postObj} : data)
+    )
 
     this.setState({
-      postlist : concatList
+      postlist : updateList
+    })
+  }
+
+  postDelete = (no) => {
+    console.log('App delete')
+
+    const filterList = this.state.postlist.filter(
+      (data) => (no !== data.no)
+    )
+
+    this.setState({
+      postlist : filterList
     })
   }
 
@@ -122,7 +188,8 @@ class App extends Component{
       <div id='App'>
         <Header />
         <InputComp addPost={this.addPost} />
-        <PostList postlist={this.currentPostList(postlist)} />
+        <PostList postlist={this.currentPostList(postlist)}
+        setUpdate={this.setUpdate} postDelete={this.postDelete  } />
         <Pagination total={postlist.length} postPerPage={postPerPage}
         setCurrentPage={this.setCurrentPage} currentPage={currentPage}
          />

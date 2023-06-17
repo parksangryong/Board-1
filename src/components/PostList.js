@@ -9,9 +9,12 @@ class PostList extends Component{
 
         }
     }
+
+
     render(){
         const result = this.props.postlist.map((data) => (
-            <Post no={data.no} detail={data.detail} title={data.title} key={data.title} writer={data.writer} postdate={data.postdate} />
+            <Post no={data.no} detail={data.detail} title={data.title} key={data.title} writer={data.writer} postdate={data.postdate}
+            setUpdate = {this.props.setUpdate} postDelete={this.props.postDelete} />
         ))
 
         return(

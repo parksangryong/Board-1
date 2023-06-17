@@ -60,6 +60,7 @@ class Pagination extends Component{
         const result = pageNumber.map(
             (page) => (<span id='page' className={currentPage===page? 'active' : ''} onClick={() => this.pageClick(page)}>{page}</span>))
 
+        
         return(
             <div id='Pagination'>
                 <div id='pagebox'>
