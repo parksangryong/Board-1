@@ -52,6 +52,8 @@ class Post extends Component {
         this.setState({
             edit : !this.state.edit
         })
+
+        
     }
 
     postDelete = () => {

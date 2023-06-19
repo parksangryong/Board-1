@@ -25,12 +25,21 @@ class App extends Component{
       // 
     ],
       postPerPage : 3, 
-      currentPage : 1
+      currentPage : 1,
+      ons : true
     }
   }
 
-  componentDidMount = async() => {
-      const result = await axios.get('/postlist');
+  componentDidMount = () => {
+    this.getPost();
+  }
+
+  componentDidUpdate = () => {
+    this.getPost();
+  }
+
+  getPost = async() => {
+    const result = await axios.get('/postlist');
 
       let postObj = [];
 
@@ -39,28 +48,12 @@ class App extends Component{
           postdate : dayjs(result.data[i].postdate).format('YYYY-MM-DD')})
         }
 
-        console.log(postObj)
+        //console.log(postObj)
 
       this.setState({
         postlist : postObj
       })
   }
-  componentDidUpdate = async() => {
-    const result = await axios.get('/postlist');
-
-    let postObj = [];
-
-      for(var i=0; i<result.data.length; i++){
-        postObj.push({no : result.data[i].no, title : result.data[i].title, writer : result.data[i].writer, detail : result.data[i].detail,
-        postdate : dayjs(result.data[i].postdate).format('YYYY-MM-DD')})
-      }
-
-      console.log(postObj)
-
-    this.setState({
-      postlist : postObj
-    })
-}
 
   setCurrentPage = (page) => {
     //console.log('넘어온 페이지: ' + page);  //1, 2, 3, 4
@@ -138,8 +131,7 @@ class App extends Component{
   // }
 
   addPost = async(title, detail, writer, nowdate) => {
-
-    const no = this.state.postlist.length + 1
+    const no = this.state.postlist[0].no + 1;
 
     const postObj = {no: no, title : title, detail : detail, writer: writer, postdate: nowdate}
 
@@ -151,33 +143,40 @@ class App extends Component{
     console.log(postObj);
     const result = await axios.post('/postlist', postObj);
     console.log(result);
-
-    window.location.replace('/main');
   }
 
-  setUpdate = (no, title, detail, writer, postdate) => {
+  setUpdate = async(no, title, detail, writer, postdate) => {
     console.log("App update")
 
     const postObj = {no: no, title: title, detail: detail, writer: writer, postdate: postdate}
-    const updateList = this.state.postlist.map(
-      (data) => (data.no === postObj.no ? {...data, ...postObj} : data)
-    )
+    // const updateList = this.state.postlist.map(
+    //   (data) => (data.no === postObj.no ? {...data, ...postObj} : data)
+    // )
 
-    this.setState({
-      postlist : updateList
-    })
+    console.log(postObj);
+    const result = await axios.put('/postlist', postObj);
+    console.log(result)
+
+    // this.setState({
+    //   postlist : updateList
+    // })
   }
 
-  postDelete = (no) => {
+  postDelete = async(no) => {
     console.log('App delete')
 
-    const filterList = this.state.postlist.filter(
-      (data) => (no !== data.no)
-    )
+    // const filterList = this.state.postlist.filter(
+    //   (data) => (no !== data.no)
+    // )
 
-    this.setState({
-      postlist : filterList
-    })
+    console.log(no);
+    const result =await axios.delete('/postlist', {data : {no}});
+    console.log(result)
+
+    
+    // this.setState({
+    //   postlist : filterList
+    // })
   }
 
   render(){
@@ -189,7 +188,7 @@ class App extends Component{
         <Header />
         <InputComp addPost={this.addPost} />
         <PostList postlist={this.currentPostList(postlist)}
-        setUpdate={this.setUpdate} postDelete={this.postDelete  } />
+        setUpdate={this.setUpdate} postDelete={this.postDelete} />
         <Pagination total={postlist.length} postPerPage={postPerPage}
         setCurrentPage={this.setCurrentPage} currentPage={currentPage}
          />

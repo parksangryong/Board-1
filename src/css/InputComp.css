@@ -32,8 +32,8 @@
 }
 #InputComp button{
     position: absolute;
-    bottom: 10px;
-    right: 50px;
+    bottom: 5px;
+    right: 30px;
     background-color: white;
     width: 50px;
     height: 30px;
